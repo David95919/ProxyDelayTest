@@ -1,5 +1,6 @@
 # 运行
 ```bash
+git clone https://github.com/David95919/ProxyDelayTest
 pip install requirements.txt
 python Main.py
 ```
