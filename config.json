@@ -1,0 +1,40 @@
+{
+  "socks5_proxies": [
+    {
+      "url": "socks5://192.168.2.1:1080",
+      "alias": "代理1"
+    },
+    {
+      "url": "socks5://192.168.2.1:1081",
+      "alias": "代理2"
+    }
+  ],
+  "test_urls": [
+    {
+      "url": "http://www.gstatic.com/generate_204",
+      "alias": "Google"
+    },
+    {
+      "url": "http://www.apple.com/library/test/success.html",
+      "alias": "Apple"
+    },
+    {
+      "url": "http://www.msftconnecttest.com/connecttest.txt",
+      "alias": "MicroSoft"
+    },
+    {
+      "url": "http://cp.cloudflare.com/",
+      "alias": "Cloudflare"
+    },
+    {
+      "url": "https://detectportal.firefox.com/success.txt",
+      "alias": "Firefox"
+    },
+    {
+      "url": "http://www.v2ex.com/generate_204",
+      "alias": "V2ex"
+    }
+  ],
+  "interval": 0.05,   
+  "test_count": 2
+}
