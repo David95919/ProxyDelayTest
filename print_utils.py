@@ -1,7 +1,11 @@
+from colorama import Fore, Style, init
+init()  # 初始化 colorama
+
 def print_results(proxy_alias, data):
     success_count = 0
     failure_count = 0
     delays = []
+    
     for entry in data['data']:
         if 'delay' in entry and entry['delay'] is not None:
             delays.append(entry['delay'])
@@ -14,12 +18,22 @@ def print_results(proxy_alias, data):
     max_delay = max(delays) if delays else 0
     min_delay = min(delays) if delays else 0
 
-    print(f"\n---  {proxy_alias}  ---")
-    print(f"成功: {success_count} 失败: {failure_count} 平均延迟: {avg_delay:.4f} 秒 最大: {max_delay:.4f} 秒 最小: {min_delay:.4f} 秒")
+    print(f"\n---  {Fore.CYAN}{proxy_alias}{Style.RESET_ALL}  ---")
+    print(f"{Fore.GREEN}成功:{Style.RESET_ALL} {success_count} {Fore.RED}失败:{Style.RESET_ALL} {failure_count} "
+          f"{Fore.BLUE}平均延迟:{Style.RESET_ALL} {avg_delay:.4f} 秒 {Fore.BLUE}最大:{Style.RESET_ALL} {max_delay:.4f} 秒 "
+          f"{Fore.BLUE}最小:{Style.RESET_ALL} {min_delay:.4f} 秒")
     
     for entry in data['data']:
-        print(f"代理: {proxy_alias} - {entry['url_alias']} - {entry['url']} - {entry['status']}, 延迟: {entry['delay']:.4f} 秒" if entry['delay'] is not None else f"代理: {proxy_alias} - {entry['url_alias']} - {entry['url']} - {entry['status']}")
-    
+        if entry['delay'] is not None:
+            status_color = Fore.GREEN if "成功" in entry['status'] else Fore.RED
+            print(f"代理: {Fore.CYAN}{proxy_alias}{Style.RESET_ALL} - {Fore.YELLOW}{entry['url_alias']}{Style.RESET_ALL} - "
+                  f"{Fore.MAGENTA}{entry['url']}{Style.RESET_ALL} - {status_color}{entry['status']}{Style.RESET_ALL}, "
+                  f"延迟: {Fore.BLUE}{entry['delay']:.4f} 秒{Style.RESET_ALL}")
+        else:
+            status_color = Fore.GREEN if "成功" in entry['status'] else Fore.RED
+            print(f"代理: {Fore.CYAN}{proxy_alias}{Style.RESET_ALL} - {Fore.YELLOW}{entry['url_alias']}{Style.RESET_ALL} - "
+                  f"{Fore.MAGENTA}{entry['url']}{Style.RESET_ALL} - {status_color}{entry['status']}{Style.RESET_ALL}")
+
 def print_summary(all_results):
     for proxy_alias, data in all_results.items():
         success_count = sum(1 for entry in data['data'] if "成功" in entry['status'])
@@ -30,5 +44,7 @@ def print_summary(all_results):
         max_delay = max(delays) if delays else 0
         min_delay = min(delays) if delays else 0
         
-        print(f"\n---  {proxy_alias} 总结 ---")
-        print(f"总成功: {success_count} 总失败: {failure_count} 平均延迟: {avg_delay:.4f} 秒 最大: {max_delay:.4f} 秒 最小: {min_delay:.4f} 秒")
+        print(f"\n---  {Fore.CYAN}{proxy_alias}{Style.RESET_ALL} 总结 ---")
+        print(f"{Fore.GREEN}总成功:{Style.RESET_ALL} {success_count} {Fore.RED}总失败:{Style.RESET_ALL} {failure_count} "
+              f"{Fore.BLUE}平均延迟:{Style.RESET_ALL} {avg_delay:.4f} 秒 {Fore.BLUE}最大:{Style.RESET_ALL} {max_delay:.4f} 秒 "
+              f"{Fore.BLUE}最小:{Style.RESET_ALL} {min_delay:.4f} 秒")
