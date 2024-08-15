@@ -42,6 +42,8 @@ def init_db(db_name='test_results.db'):
     conn.close()
 
 def insert_test_list(proxy_alias, proxy, url_alias, url, delay, db_name='test_results.db'):
+    if not ENABLE_DB_STATS:
+        return
     conn = sqlite3.connect(db_name)
     cursor = conn.cursor()
     cursor.execute('''
@@ -52,6 +54,8 @@ def insert_test_list(proxy_alias, proxy, url_alias, url, delay, db_name='test_re
     conn.close()
 
 def update_test_stats(proxy_alias, proxy, success_count, failure_count, delays, db_name='test_results.db'):
+    if not ENABLE_DB_STATS:
+        return
     conn = sqlite3.connect(db_name)
     cursor = conn.cursor()
     
@@ -156,7 +160,7 @@ async def run_tests(test_urls, proxies, results, db_name):
             print(f"代理: {proxy_alias} - {entry['url_alias']} - {entry['url']} - {entry['status']}, 延迟: {entry['delay']:.4f} 秒" if entry['delay'] is not None else f"代理: {proxy_alias} - {entry['url_alias']} - {entry['url']} - {entry['status']}")
         
         # 更新 TestStats
-        update_test_stats(proxy_alias, data['proxy'], success_count, failure_count, delays)
+        update_test_stats(proxy_alias, data['proxy'], success_count, failure_count, delays, db_name)
 
 async def test_http_clients(test_urls, proxies, results, db_name):
     tasks = [test_http_client(test_urls, proxy['url'], proxy['alias'], results, db_name) for proxy in proxies]
@@ -176,11 +180,10 @@ async def periodic_test(test_urls, proxies, interval, test_count, db_name):
             await asyncio.sleep(interval * 60)  # 等待指定分钟数
     
     # 输出所有轮次的总结统计数据
-    summarize_results(all_results, db_name)
+    summarize_results(all_results)
 
-def summarize_results(results, db_name):
-    for proxy_alias, data in results.items():
-        # 计算统计数据
+def summarize_results(all_results):
+    for proxy_alias, data in all_results.items():
         success_count = 0
         failure_count = 0
         delays = []
@@ -202,13 +205,14 @@ def summarize_results(results, db_name):
 def load_config(filename):
     with open(filename, 'r', encoding='utf-8') as file:
         config = json.load(file)
-    return config['test_urls'], config['socks5_proxies'], config['interval'], config['test_count']
+    return config['test_urls'], config['socks5_proxies'], config['interval'], config['test_count'], config.get('enable_db_stats', True)
 
-# 从JSON文件中加载配置
-test_urls, socks5_proxies, interval, test_count = load_config('config.json')
+# 从 JSON 文件中加载配置
+test_urls, socks5_proxies, interval, test_count, ENABLE_DB_STATS = load_config('config.json')
 
 # 初始化数据库
-init_db()
+if ENABLE_DB_STATS:
+    init_db()
 
 # 执行持续性测试
 asyncio.run(periodic_test(test_urls, socks5_proxies, interval, test_count, 'test_results.db'))

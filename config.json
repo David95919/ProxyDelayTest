@@ -1,11 +1,11 @@
 {
   "socks5_proxies": [
     {
-      "url": "socks5://192.168.2.1:1080",
+      "url": "socks5://192.168.2.1:10085",
       "alias": "代理1"
     },
     {
-      "url": "socks5://192.168.2.1:1081",
+      "url": "socks5://192.168.2.1:10086",
       "alias": "代理2"
     }
   ],
@@ -35,6 +35,7 @@
       "alias": "V2ex"
     }
   ],
-  "interval": 0.05,   
-  "test_count": 2
+  "interval": 1,   
+  "test_count": 5,
+  "enable_db_stats": false
 }
