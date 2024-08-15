@@ -5,7 +5,7 @@ pip install requirements.txt
 python Main.py
 ```
 
-# 配置
+# 配置 config.json
 1. socks5_proxies 代理列表
 2. test_urls 测试网站
 3. interval 测试间隔
